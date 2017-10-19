@@ -28,3 +28,6 @@ jobs:
       - run:
           name: Build library
           command: ./gradlew assemble
+      - store_artifacts:
+          path: app/build/outputs/aar/
+          destination: aar
