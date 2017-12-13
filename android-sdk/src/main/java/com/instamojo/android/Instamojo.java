@@ -13,6 +13,16 @@ import com.instamojo.android.network.Urls;
 
 public class Instamojo {
 
+    /**
+     * Base URL for production environment.
+     */
+    public static final String PRODUCTION_BASE_URL = "https://api.instamojo.com/";
+
+    /**
+     * Base URL for test environment.
+     */
+    public static final String TEST_BASE_URL = "https://test.instamojo.com/";
+
     private static Instamojo instance;
     private Context appContext;
 
@@ -28,7 +38,7 @@ public class Instamojo {
     public static void initialize(Context appContext) {
         instance = new Instamojo(appContext);
         Logger.setLogLevel(Log.WARN);
-        Urls.setBaseUrl(Constants.DEFAULT_BASE_URL);
+        Urls.setBaseUrl(PRODUCTION_BASE_URL);
     }
 
     /**
@@ -55,7 +65,7 @@ public class Instamojo {
         Urls.setBaseUrl(baseUrl);
     }
 
-    private static boolean isInitialised() {
+    public static boolean isInitialised() {
         if (instance != null) {
             return true;
         }

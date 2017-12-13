@@ -1,10 +1,13 @@
 package com.instamojo.android.network;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.instamojo.android.BuildConfig;
+import com.instamojo.android.Instamojo;
 import com.instamojo.android.callbacks.JusPayRequestCallback;
 import com.instamojo.android.callbacks.OrderRequestCallBack;
 import com.instamojo.android.callbacks.UPICallback;
@@ -40,7 +43,7 @@ import java.util.Map;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.Headers;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -62,7 +65,9 @@ public class Request {
     private String accessToken;
     private String orderID;
 
-    private static final OkHttpClient client = new OkHttpClient();
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .addInterceptor(new DefaultHeadersInterceptor())
+            .build();
 
     /**
      * Network Request to create an order ID from Instamojo server.
@@ -121,11 +126,12 @@ public class Request {
 
     /**
      * Network request to fetch the order
-     * @param accessToken           String
-     * @param orderID               String
-     * @param orderRequestCallback  {@link OrderRequestCallBack}
+     *
+     * @param accessToken          String
+     * @param orderID              String
+     * @param orderRequestCallback {@link OrderRequestCallBack}
      */
-    public Request(@NonNull String accessToken, @NonNull String orderID, @NonNull OrderRequestCallBack orderRequestCallback){
+    public Request(@NonNull String accessToken, @NonNull String orderID, @NonNull OrderRequestCallBack orderRequestCallback) {
         this.mode = MODE.FetchOrder;
         this.accessToken = accessToken;
         this.orderID = orderID;
@@ -174,13 +180,17 @@ public class Request {
                 .add("merchant_id", order.getCardOptions().getMerchantID())
                 .add("payment_method_type", "CARD")
                 .add("card_number", card.getCardNumber())
-                .add("name_on_card", card.getCardHolderName())
                 .add("card_exp_month", card.getMonth())
                 .add("card_exp_year", card.getYear())
                 .add("card_security_code", card.getCvv())
                 .add("save_to_locker", card.canSaveCard() ? "true" : "false")
                 .add("redirect_after_payment", "true")
                 .add("format", "json");
+
+        if (card.getCardHolderName() != null) {
+            body.add("name_on_card", card.getCardHolderName());
+        }
+
         if (order.getEmiOptions() != null
                 && order.getEmiOptions().getSelectedBankCode() != null) {
             Logger.logDebug(this.getClass().getSimpleName(), "emi selected....");
@@ -230,15 +240,10 @@ public class Request {
         return args;
     }
 
-    private void executeFetchOrder(){
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("User-Agent", getUserAgent());
-        headers.put("Authorization", "Bearer " + accessToken);
-
+    private void executeFetchOrder() {
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(Urls.getOrderFetchURL(orderID))
-                .removeHeader("User-Agent")
-                .headers(Headers.of(headers))
+                .header("Authorization", "Bearer " + accessToken)
                 .get()
                 .build();
         client.newCall(request).enqueue(new Callback() {
@@ -277,20 +282,14 @@ public class Request {
                 .add("currency", order.getCurrency())
                 .add("transaction_id", order.getTransactionID())
                 .add("redirect_url", order.getRedirectionUrl())
-                .add("advanced_payment_options", "true")
-                .add("mode", order.getMode());
+                .add("advanced_payment_options", "true");
         if (order.getWebhook() != null) {
             builder.add("webhook_url", order.getWebhook());
         }
         RequestBody body = builder.build();
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("User-Agent", getUserAgent());
-        headers.put("Authorization", "Bearer " + order.getAuthToken());
-
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(Urls.getOrderCreateUrl())
-                .removeHeader("User-Agent")
-                .headers(Headers.of(headers))
+                .header("Authorization", "Bearer " + order.getAuthToken())
                 .post(body)
                 .build();
 
@@ -453,14 +452,9 @@ public class Request {
                 .add("virtual_address", this.virtualPaymentAddress)
                 .build();
 
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("User-Agent", getUserAgent());
-        headers.put("Authorization", "Bearer " + order.getAuthToken());
-
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(order.getUpiOptions().getUrl())
-                .removeHeader("User-Agent")
-                .headers(Headers.of(headers))
+                .header("Authorization", "Bearer " + order.getAuthToken())
                 .post(body)
                 .build();
 
@@ -503,14 +497,9 @@ public class Request {
     }
 
     private void executeUPIStatusCheck() {
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("User-Agent", getUserAgent());
-        headers.put("Authorization", "Bearer " + order.getAuthToken());
-
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(upiSubmissionResponse.getStatusCheckURL())
-                .removeHeader("User-Agent")
-                .headers(Headers.of(headers))
+                .header("Authorization", "Bearer " + order.getAuthToken())
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -552,16 +541,55 @@ public class Request {
         return responseObject.getInt("status_code") != Constants.PENDING_PAYMENT;
     }
 
-    private String getUserAgent() {
-        return "Instamojo Android SDK;" + Build.MODEL + ";" + Build.BRAND + ";" + Build.VERSION.SDK_INT
-                + ";" + BuildConfig.APPLICATION_ID + ";" + BuildConfig.VERSION_NAME + ";" + BuildConfig.VERSION_CODE;
-    }
-
     private enum MODE {
         OrderCreate,
         FetchOrder,
         Juspay,
         UPISubmission,
         UPIStatusCheck
+    }
+
+    private static class DefaultHeadersInterceptor implements Interceptor {
+        private String userAgent;
+        private String referer;
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            return chain.proceed(chain.request()
+                    .newBuilder()
+                    .header("User-Agent", getUserAgent())
+                    .header("Referer", getReferer())
+                    .build());
+        }
+
+        private String getUserAgent() {
+            if (this.userAgent == null || this.userAgent.length() == 0) {
+                userAgent = "instamojo-android/" + BuildConfig.VERSION_NAME
+                        + " android/" + Build.VERSION.RELEASE
+                        + " " + Build.BRAND + "/" + Build.MODEL;
+            }
+
+            return this.userAgent;
+        }
+
+        private String getReferer() {
+            if (this.referer == null || this.referer.length() == 0) {
+                if (!Instamojo.isInitialised()) {
+                    return "";
+                }
+
+                Context appContext = Instamojo.getInstance().getAppContext();
+
+                String packageName = appContext.getPackageName();
+                this.referer = "android-app://" + packageName;
+
+                try {
+                    this.referer += "/" + appContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
+                } catch (PackageManager.NameNotFoundException e) {
+                    Logger.logError("Request", "Unable to get version of the current application.");
+                }
+            }
+            return this.referer;
+        }
     }
 }

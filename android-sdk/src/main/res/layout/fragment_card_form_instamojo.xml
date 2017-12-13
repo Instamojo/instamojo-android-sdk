@@ -25,20 +25,6 @@
         app:met_textColor="@android:color/black"
         app:met_validateOnFocusLost="true" />
 
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/name_on_card_box"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_10"
-        android:hint="@string/name_on_card"
-        android:inputType="textPersonName"
-        android:textSize="16sp"
-        app:met_errorColor="@android:color/holo_red_light"
-        app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/edit_text_color"
-        app:met_textColor="@android:color/black"
-        app:met_validateOnFocusLost="true" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

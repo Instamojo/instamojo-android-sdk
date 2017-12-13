@@ -50,11 +50,6 @@ public class Constants {
     public static final String PAYMENT_ID = "paymentID";
 
     /**
-     * Default base url
-     */
-    public static final String DEFAULT_BASE_URL = "https://api.instamojo.com/";
-
-    /**
      * Status code for UPI Pending Authentication
      */
     public static final int PENDING_PAYMENT = 2;

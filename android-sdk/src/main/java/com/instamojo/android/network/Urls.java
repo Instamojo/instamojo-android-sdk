@@ -2,6 +2,7 @@ package com.instamojo.android.network;
 
 import android.util.Log;
 
+import com.instamojo.android.Instamojo;
 import com.instamojo.android.helpers.Constants;
 import com.instamojo.android.helpers.Logger;
 
@@ -11,7 +12,7 @@ import com.instamojo.android.helpers.Logger;
 
 public class Urls {
 
-    private static String baseUrl = Constants.DEFAULT_BASE_URL;
+    private static String baseUrl = Instamojo.PRODUCTION_BASE_URL;
 
     /**
      * @return Order Create URL.
@@ -53,7 +54,7 @@ public class Urls {
     private static String sanitizeURL(String baseUrl) {
 
         if (baseUrl == null || baseUrl.trim().isEmpty()) {
-            baseUrl = Constants.DEFAULT_BASE_URL;
+            baseUrl = Instamojo.PRODUCTION_BASE_URL;
         }
 
         if (!baseUrl.endsWith("/")) {
@@ -63,7 +64,7 @@ public class Urls {
         return baseUrl;
     }
 
-    public static String getOrderFetchURL(String orderID){
+    public static String getOrderFetchURL(String orderID) {
         return baseUrl + "v2/gateway/orders/"+orderID+"/payment-options/";
     }
 }

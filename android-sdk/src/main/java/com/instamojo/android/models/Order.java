@@ -37,7 +37,6 @@ public class Order implements Parcelable {
     private String currency;
     private String redirectionUrl;
     private String webhook;
-    private String mode;
     private String authToken;
     private String resourceURI;
     private CardOptions cardOptions;
@@ -65,7 +64,6 @@ public class Order implements Parcelable {
         this.amount = amount;
         this.description = description;
         this.currency = "INR";
-        this.mode = "Android_SDK";
         this.authToken = authToken;
         this.transactionID = transactionID;
         this.redirectionUrl = Urls.getDefaultRedirectUrl();
@@ -82,7 +80,6 @@ public class Order implements Parcelable {
         currency = in.readString();
         redirectionUrl = in.readString();
         webhook = in.readString();
-        mode = in.readString();
         authToken = in.readString();
         resourceURI = in.readString();
         cardOptions = in.readParcelable(CardOptions.class.getClassLoader());
@@ -180,13 +177,6 @@ public class Order implements Parcelable {
      */
     public String getCurrency() {
         return currency;
-    }
-
-    /**
-     * @return Mode of the Order.
-     */
-    public String getMode() {
-        return mode;
     }
 
     /**
@@ -475,7 +465,6 @@ public class Order implements Parcelable {
         dest.writeString(currency);
         dest.writeString(redirectionUrl);
         dest.writeString(webhook);
-        dest.writeString(mode);
         dest.writeString(authToken);
         dest.writeString(resourceURI);
         dest.writeParcelable(cardOptions, flags);

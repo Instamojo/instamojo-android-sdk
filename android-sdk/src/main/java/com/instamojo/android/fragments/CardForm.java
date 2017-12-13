@@ -36,7 +36,7 @@ public class CardForm extends BaseFragment implements View.OnClickListener {
     private static final String MONTH_YEAR_SEPARATOR = "/";
     private static final String FRAGMENT_NAME = "Card Form";
 
-    private MaterialEditText cardNumberBox, nameOnCardBox, cvvBox, dateBox;
+    private MaterialEditText cardNumberBox, cvvBox, dateBox;
     private List<MaterialEditText> editTexts;
     private PaymentDetailsActivity parentActivity;
     private Mode mode;
@@ -92,15 +92,12 @@ public class CardForm extends BaseFragment implements View.OnClickListener {
     @Override
     public void inflateXML(View view) {
         cardNumberBox = (MaterialEditText) view.findViewById(R.id.card_number_box);
-        cardNumberBox.setNextFocusDownId(R.id.name_on_card_box);
+        cardNumberBox.setNextFocusDownId(R.id.card_date_box);
         cardNumberBox.addTextChangedListener(new CardTextWatcher());
         cardNumberBox.addValidator(new Validators.EmptyFieldValidator());
         cardNumberBox.addValidator(new Validators.CardValidator());
         dateBox = (MaterialEditText) view.findViewById(R.id.card_date_box);
         dateBox.setNextFocusDownId(R.id.cvv_box);
-        nameOnCardBox = (MaterialEditText) view.findViewById(R.id.name_on_card_box);
-        nameOnCardBox.setNextFocusDownId(R.id.card_date_box);
-        nameOnCardBox.addValidator(new Validators.EmptyFieldValidator());
         cvvBox = (MaterialEditText) view.findViewById(R.id.cvv_box);
         dateBox.addTextChangedListener(new TextWatcher() {
 
@@ -158,7 +155,7 @@ public class CardForm extends BaseFragment implements View.OnClickListener {
         checkOutButton.setText(checkoutText);
         checkOutButton.setOnClickListener(this);
 
-        editTexts = Arrays.asList(cardNumberBox, dateBox, nameOnCardBox, cvvBox);
+        editTexts = Arrays.asList(cardNumberBox, dateBox, cvvBox);
         Logger.logDebug(this.getClass().getSimpleName(), "Inflated XML");
     }
 
@@ -192,7 +189,6 @@ public class CardForm extends BaseFragment implements View.OnClickListener {
 
     private void changeEditBoxesState(boolean enable) {
         cardNumberBox.setEnabled(enable);
-        nameOnCardBox.setEnabled(enable);
         dateBox.setEnabled(enable);
         cvvBox.setEnabled(enable);
     }
@@ -203,7 +199,6 @@ public class CardForm extends BaseFragment implements View.OnClickListener {
         }
 
         Card card = new Card();
-        card.setCardHolderName(nameOnCardBox.getText().toString().trim());
         String cardNumber = cardNumberBox.getText().toString().trim();
         cardNumber = cardNumber.replaceAll(" ", "");
         card.setCardNumber(cardNumber);
@@ -303,7 +298,7 @@ public class CardForm extends BaseFragment implements View.OnClickListener {
             cardNumberBox.setCompoundDrawablesWithIntrinsicBounds(0, 0, drawable, 0);
 
             if (card.length() == limit) {
-                nameOnCardBox.requestFocus();
+                dateBox.requestFocus();
             }
             currentLength = cardNumberBox.getText().toString().trim().length();
         }

@@ -3,7 +3,6 @@
     <string name="status_bar">Status bar replacement</string>
     <string name="card_number">Card Number</string>
     <string name="date_hint">Expiry MM/YY</string>
-    <string name="name_on_card">Name on Card</string>
     <string name="cvv_hint">CVV</string>
     <string name="checkout">Checkout</string>
     <string name="error_message_juspay">Failed to initiate Payment. Please try again!</string>
