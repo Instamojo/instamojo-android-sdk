@@ -1,5 +1,0 @@
-<resources>
-    <dimen name="status_bar_height">0dp</dimen>
-    <dimen name="margin_16">16dp</dimen>
-    <dimen name="margin_10">10dp</dimen>
-</resources>
