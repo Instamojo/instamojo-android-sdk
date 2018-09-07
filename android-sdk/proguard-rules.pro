@@ -95,8 +95,16 @@
 -dontwarn okio.**
 
 # OkHttp-keep class com.squareup.okhttp.** { *; }
--keep interface com.squareup.okhttp.** { *; }
--dontwarn com.squareup.okhttp.**
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
+-keepattributes Signature
+-keepattributes Annotation
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
 
 # apache http
 -dontwarn org.apache.http.**
