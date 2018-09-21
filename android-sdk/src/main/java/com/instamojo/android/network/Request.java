@@ -454,7 +454,6 @@ public class Request {
 
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(order.getUpiOptions().getUrl())
-                .header("Authorization", "Bearer " + order.getAuthToken())
                 .post(body)
                 .build();
 
@@ -499,7 +498,6 @@ public class Request {
     private void executeUPIStatusCheck() {
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(upiSubmissionResponse.getStatusCheckURL())
-                .header("Authorization", "Bearer " + order.getAuthToken())
                 .build();
 
         client.newCall(request).enqueue(new Callback() {

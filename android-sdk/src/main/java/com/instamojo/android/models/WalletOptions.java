@@ -48,15 +48,13 @@ public class WalletOptions implements Parcelable {
     }
 
     /**
-     * PostData to be posted with Netbanking URl.
+     * PostData to be posted with Wallet URL.
      *
-     * @param authToken AuthToken retrieved using Dev's Client auth keys.
-     *                  Should not use these keys in Application.
      * @param walletID  Wallet ID of the wallet user selected.
      * @return string with form query format.
      */
-    public String getPostData(@NonNull String authToken, @NonNull String walletID) {
-        return "access_token=" + authToken + "&wallet_id=" + walletID;
+    public String getPostData(@NonNull String walletID) {
+        return "wallet_id=" + walletID;
     }
 
     @Override

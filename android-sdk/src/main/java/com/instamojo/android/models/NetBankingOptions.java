@@ -68,15 +68,13 @@ public class NetBankingOptions implements Parcelable {
     }
 
     /**
-     * PostData to be posted with Netbanking URl.
+     * PostData to be posted with Netbanking URL.
      *
-     * @param authToken AuthToken retrieved using Dev's Client auth keys.
-     *                  Should not use these keys in Application.
      * @param bankCode  Bank code of the Bank user selected.
      * @return string with form query format.
      */
-    public String getPostData(@NonNull String authToken, @NonNull String bankCode) {
-        return "access_token=" + authToken + "&bank_code=" + bankCode;
+    public String getPostData(@NonNull String bankCode) {
+        return "bank_code=" + bankCode;
     }
 
     @Override

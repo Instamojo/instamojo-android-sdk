@@ -94,7 +94,7 @@ public class ListForm extends BaseFragment implements SearchView.OnQueryTextList
                     Order order = parentActivity.getOrder();
                     bundle.putString(Constants.URL, order.getNetBankingOptions().getUrl());
                     bundle.putString(Constants.POST_DATA, order.getNetBankingOptions().
-                            getPostData(order.getAuthToken(), bank.getValue()));
+                            getPostData(bank.getValue()));
                     parentActivity.startPaymentActivity(bundle);
                 }
             });
@@ -117,7 +117,7 @@ public class ListForm extends BaseFragment implements SearchView.OnQueryTextList
                     Order order = parentActivity.getOrder();
                     bundle.putString(Constants.URL, order.getWalletOptions().getUrl());
                     bundle.putString(Constants.POST_DATA, order.getWalletOptions().
-                            getPostData(order.getAuthToken(), wallet.getWalletID()));
+                            getPostData(wallet.getWalletID()));
                     parentActivity.startPaymentActivity(bundle);
                 }
             });
