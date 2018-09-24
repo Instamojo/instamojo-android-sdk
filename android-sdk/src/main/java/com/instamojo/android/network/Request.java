@@ -310,7 +310,6 @@ public class Request {
                     JSONObject orderObject = responseObject.getJSONObject("order");
                     order.setId(orderObject.getString("id"));
                     order.setTransactionID(orderObject.getString("transaction_id"));
-                    order.setResourceURI(orderObject.getString("resource_uri"));
                     updateTransactionDetails(responseObject);
                     orderRequestCallback.onFinish(order, null);
                 } catch (IOException e) {
@@ -337,13 +336,11 @@ public class Request {
         String currency = orderObject.getString("currency");
         String redirectionURL = orderObject.getString("redirect_url");
         String webhookURL = orderObject.getString("webhook_url");
-        String resourceURI = orderObject.getString("resource_uri");
         order = new Order(accessToken, transactionID, buyerName, buyerEmail, phone, amount, description);
         order.setId(id);
         order.setCurrency(currency);
         order.setRedirectionUrl(redirectionURL);
         order.setWebhook(webhookURL);
-        order.setResourceURI(resourceURI);
         updateTransactionDetails(responseObject);
     }
 

@@ -38,7 +38,6 @@ public class Order implements Parcelable {
     private String redirectionUrl;
     private String webhook;
     private String authToken;
-    private String resourceURI;
     private CardOptions cardOptions;
     private NetBankingOptions netBankingOptions;
     private EMIOptions emiOptions;
@@ -81,7 +80,6 @@ public class Order implements Parcelable {
         redirectionUrl = in.readString();
         webhook = in.readString();
         authToken = in.readString();
-        resourceURI = in.readString();
         cardOptions = in.readParcelable(CardOptions.class.getClassLoader());
         netBankingOptions = in.readParcelable(NetBankingOptions.class.getClassLoader());
         emiOptions = in.readParcelable(EMIOptions.class.getClassLoader());
@@ -236,20 +234,6 @@ public class Order implements Parcelable {
      */
     public void setId(@NonNull String id) {
         this.id = id;
-    }
-
-    /**
-     * @return resourceURI of the Seller.
-     */
-    public String getResourceURI() {
-        return resourceURI;
-    }
-
-    /**
-     * @param resourceURI resource URI of the seller. Must not be null.
-     */
-    public void setResourceURI(@NonNull String resourceURI) {
-        this.resourceURI = resourceURI;
     }
 
     /**
@@ -466,7 +450,6 @@ public class Order implements Parcelable {
         dest.writeString(redirectionUrl);
         dest.writeString(webhook);
         dest.writeString(authToken);
-        dest.writeString(resourceURI);
         dest.writeParcelable(cardOptions, flags);
         dest.writeParcelable(netBankingOptions, flags);
         dest.writeParcelable(emiOptions, flags);
