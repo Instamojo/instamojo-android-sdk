@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -191,7 +191,7 @@ public class PaymentDetailsActivity extends BaseActivity {
     /**
      * Show the search icon in the actionbar
      *
-     * @param queryTextListener {@link android.support.v7.widget.SearchView.OnQueryTextListener} to listen for the query string
+     * @param queryTextListener {@link androidx.appcompat.widget.SearchView.OnQueryTextListener} to listen for the query string
      */
     public void showSearchOption(String hintText, SearchView.OnQueryTextListener queryTextListener) {
         this.showSearch = true;
