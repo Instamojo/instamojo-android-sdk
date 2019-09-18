@@ -19,7 +19,7 @@ import com.instamojo.android.fragments.PaymentOptionsFragment;
 import com.instamojo.android.helpers.Constants;
 import com.instamojo.android.helpers.Logger;
 import com.instamojo.android.models.GatewayOrder;
-import com.instamojo.android.network.ImojoService;
+import com.instamojo.android.network.InstamojoService;
 import com.instamojo.android.network.ServiceGenerator;
 
 import java.io.IOException;
@@ -58,8 +58,8 @@ public class PaymentDetailsActivity extends BaseActivity {
     }
 
     private void fetchOrder(String orderID) {
-        ImojoService imojoService = ServiceGenerator.getImojoService();
-        Call<GatewayOrder> gatewayOrderCall = imojoService.getPaymentOptions(orderID);
+        InstamojoService instamojoService = ServiceGenerator.getImojoService();
+        Call<GatewayOrder> gatewayOrderCall = instamojoService.getPaymentOptions(orderID);
         gatewayOrderCall.enqueue(new Callback<GatewayOrder>() {
             @Override
             public void onResponse(Call<GatewayOrder> call, Response<GatewayOrder> response) {

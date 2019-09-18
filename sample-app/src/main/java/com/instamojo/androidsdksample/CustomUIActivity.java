@@ -22,7 +22,7 @@ import com.instamojo.android.models.CardOptions;
 import com.instamojo.android.models.CardPaymentResponse;
 import com.instamojo.android.models.GatewayOrder;
 import com.instamojo.android.models.PaymentOptions;
-import com.instamojo.android.network.ImojoService;
+import com.instamojo.android.network.InstamojoService;
 import com.instamojo.android.network.ServiceGenerator;
 
 import java.io.IOException;
@@ -55,8 +55,8 @@ public class CustomUIActivity extends AppCompatActivity {
     }
 
     private void fetchOrder(String orderID) {
-        ImojoService imojoService = ServiceGenerator.getImojoService();
-        Call<GatewayOrder> gatewayOrderCall = imojoService.getPaymentOptions(orderID);
+        InstamojoService instamojoService = ServiceGenerator.getImojoService();
+        Call<GatewayOrder> gatewayOrderCall = instamojoService.getPaymentOptions(orderID);
         gatewayOrderCall.enqueue(new Callback<GatewayOrder>() {
             @Override
             public void onResponse(Call<GatewayOrder> call, Response<GatewayOrder> response) {
@@ -186,7 +186,7 @@ public class CustomUIActivity extends AppCompatActivity {
     private void proceedWithCard(GatewayOrder order, Card card) {
         dialog.show();
 
-        ImojoService service = ServiceGenerator.getImojoService();
+        InstamojoService service = ServiceGenerator.getImojoService();
         final CardOptions cardOptions = order.getPaymentOptions().getCardOptions();
         Map<String, String> cardPaymentRequest = ObjectMapper.populateCardRequest(order, card, null, 0);
 

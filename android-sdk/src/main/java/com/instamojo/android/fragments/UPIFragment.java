@@ -21,7 +21,7 @@ import com.instamojo.android.models.GatewayOrder;
 import com.instamojo.android.models.UPIOptions;
 import com.instamojo.android.models.UPIStatusResponse;
 import com.instamojo.android.models.UPISubmissionResponse;
-import com.instamojo.android.network.ImojoService;
+import com.instamojo.android.network.InstamojoService;
 import com.instamojo.android.network.ServiceGenerator;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -110,14 +110,14 @@ public class UPIFragment extends BaseFragment implements View.OnClickListener {
         virtualAddressBox.setEnabled(false);
         verifyPayment.setEnabled(false);
 
-        ImojoService imojoService = ServiceGenerator.getImojoService();
+        InstamojoService instamojoService = ServiceGenerator.getImojoService();
 
         // TODO this fragment should receive UPI options only
         GatewayOrder gatewayOrder = parentActivity.getOrder();
         UPIOptions upiOptions = gatewayOrder.getPaymentOptions().getUpiOptions();
 
         Call<UPISubmissionResponse> upiPaymentCall =
-                imojoService.collectUPIPayment(upiOptions.getSubmissionURL(), virtualAddressBox.getText().toString());
+                instamojoService.collectUPIPayment(upiOptions.getSubmissionURL(), virtualAddressBox.getText().toString());
 
         upiPaymentCall.enqueue(new Callback<UPISubmissionResponse>() {
             @Override
@@ -174,8 +174,8 @@ public class UPIFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void checkUpiPaymentStatus() {
-        ImojoService imojoService = ServiceGenerator.getImojoService();
-        Call<UPIStatusResponse> upiStatusCall = imojoService.getUPIStatus(mUPIStatusURL);
+        InstamojoService instamojoService = ServiceGenerator.getImojoService();
+        Call<UPIStatusResponse> upiStatusCall = instamojoService.getUPIStatus(mUPIStatusURL);
         upiStatusCall.enqueue(new Callback<UPIStatusResponse>() {
             @Override
             public void onResponse(Call<UPIStatusResponse> call, Response<UPIStatusResponse> response) {

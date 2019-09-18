@@ -16,7 +16,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Url;
 
-public interface ImojoService {
+public interface InstamojoService {
 
     @GET("v2/gateway/orders/{orderID}/checkout-options/")
     Call<GatewayOrder> getPaymentOptions(@Path("orderID") String orderID);

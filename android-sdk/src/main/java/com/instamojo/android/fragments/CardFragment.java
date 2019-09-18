@@ -28,7 +28,7 @@ import com.instamojo.android.models.Card;
 import com.instamojo.android.models.CardOptions;
 import com.instamojo.android.models.CardPaymentResponse;
 import com.instamojo.android.models.GatewayOrder;
-import com.instamojo.android.network.ImojoService;
+import com.instamojo.android.network.InstamojoService;
 import com.instamojo.android.network.ServiceGenerator;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -261,7 +261,7 @@ public class CardFragment extends BaseFragment implements View.OnClickListener {
         Map<String, String> cardPaymentRequest = ObjectMapper.populateCardRequest(order, card,
                 mSelectedBankCode, mSelectedTenure);
 
-        ImojoService service = ServiceGenerator.getImojoService();
+        InstamojoService service = ServiceGenerator.getImojoService();
         final CardOptions cardOptions = order.getPaymentOptions().getCardOptions();
         Call<CardPaymentResponse> orderCall = service.collectCardPayment(cardOptions.getSubmissionURL(),
                 cardPaymentRequest);

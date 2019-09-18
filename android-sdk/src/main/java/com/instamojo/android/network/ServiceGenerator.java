@@ -42,8 +42,8 @@ public class ServiceGenerator {
         retrofit = builder.baseUrl(baseUrl).build();
     }
 
-    public static ImojoService getImojoService() {
-        return retrofit.create(ImojoService.class);
+    public static InstamojoService getImojoService() {
+        return retrofit.create(InstamojoService.class);
     }
 
     private static class DefaultHeadersInterceptor implements Interceptor {
