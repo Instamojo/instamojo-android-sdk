@@ -68,7 +68,7 @@ dependencies {
 ```
 
 ### SDK Permissions
-The following are the minimum set of permissions required by the SDK. Add the following set of permissions in the application’s manifest file above the `<application>` tag.
+The following are automatically added to your app manifest as required by the SDK.
 ```xml
 //General permissions 
 <uses-permission android:name="android.permission.INTERNET" />
@@ -78,6 +78,13 @@ The following are the minimum set of permissions required by the SDK. Add the fo
 <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 <uses-permission android:name="android.permission.READ_SMS" />
 <uses-permission android:name="android.permission.RECEIVE_SMS" />
+```
+
+You can remove the SMS permission from your app (as per new [Google's Guidelines](https://support.google.com/googleplay/android-developer/answer/9047303))
+```xml
+<uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove" />
+<uses-permission android:name="android.permission.READ_SMS" tools:node="remove" />
+<uses-permission android:name="android.permission.RECEIVE_SMS" tools:node="remove" />
 ```
 
 ### Proguard rules
