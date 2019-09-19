@@ -27,7 +27,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity implements Instamojo.InstamojoPaymentCallback {
+public class MainActivity extends AppCompatActivity implements Instamojo.PaymentCallback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final HashMap<Instamojo.Environment, String> env_options = new HashMap<>();
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements Instamojo.Instamo
     }
 
     @Override
-    public void onInstamojoPaymentComplete(String orderID, String transactionID, String paymentID, String paymentStatus) {
+    public void onPaymentComplete(String orderID, String transactionID, String paymentID, String paymentStatus) {
         Log.d(TAG, "Payment complete");
         showToast("Payment complete. Order ID: " + orderID + ", Transaction ID: " + transactionID
                 + ", Payment ID:" + paymentID + ", Status: " + paymentStatus);

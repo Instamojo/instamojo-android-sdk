@@ -21,7 +21,7 @@ public class Instamojo extends BroadcastReceiver {
     private static Instamojo mInstance;
     private Context mContext;
 
-    private InstamojoPaymentCallback mCallback;
+    private PaymentCallback mCallback;
 
     public static final int RESULT_SUCCESS = 1;
     public static final int RESULT_CANCELLED = 2;
@@ -45,7 +45,7 @@ public class Instamojo extends BroadcastReceiver {
                     String transactionID = returnData.getString(Constants.TRANSACTION_ID);
                     String paymentID = returnData.getString(Constants.PAYMENT_ID);
                     String paymentStatus = returnData.getString(Constants.PAYMENT_STATUS);
-                    mCallback.onInstamojoPaymentComplete(orderID, transactionID, paymentID, paymentStatus);
+                    mCallback.onPaymentComplete(orderID, transactionID, paymentID, paymentStatus);
                     return;
 
                 case RESULT_CANCELLED:
@@ -70,8 +70,8 @@ public class Instamojo extends BroadcastReceiver {
         TEST, PRODUCTION
     }
 
-    public interface InstamojoPaymentCallback {
-        void onInstamojoPaymentComplete(String orderID, String transactionID, String paymentID, String paymentStatus);
+    public interface PaymentCallback {
+        void onPaymentComplete(String orderID, String transactionID, String paymentID, String paymentStatus);
 
         void onPaymentCancelled();
 
@@ -110,7 +110,7 @@ public class Instamojo extends BroadcastReceiver {
      * @param orderID  Identifier of an Gateway Order instance created in the server (developer)
      * @param callback Callback interface to receive the response from Instamojo SDK
      */
-    public void initiatePayment(final Activity activity, final String orderID, final InstamojoPaymentCallback callback) {
+    public void initiatePayment(final Activity activity, final String orderID, final PaymentCallback callback) {
         mCallback = callback;
         Intent intent = new Intent(mContext, PaymentDetailsActivity.class);
         intent.putExtra(Constants.ORDER_ID, orderID);
