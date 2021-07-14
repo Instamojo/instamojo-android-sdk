@@ -34,9 +34,9 @@ class UPIViewModel(val upiRepo: UPIRepo) : ViewModel() {
         paymentRequestChangeLiveData.value = PaymentRequest(submissionUrl,vpa)
     }
 
-    class UPIViewModelFactory internal constructor(private val setupPaymentLinkRepo: UPIRepo) : ViewModelProvider.Factory {
+    class UPIViewModelFactory internal constructor(private val upiRepo: UPIRepo) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return UPIViewModel(setupPaymentLinkRepo) as T
+            return UPIViewModel(upiRepo) as T
         }
     }
 

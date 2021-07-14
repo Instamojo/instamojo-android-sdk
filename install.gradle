@@ -1,41 +1,80 @@
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+version = sdkVersion
 
-// Maven Group ID for the artifact
-group = 'com.instamojo'
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
 
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
                 groupId 'com.instamojo'
                 artifactId 'android-sdk'
-                name 'Instamojo Android SDK'
-                description libraryDescription
-                url siteUrl
+                version sdkVersion
 
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+
+                artifact sourcesJar
+                artifact javadocJar
+
+                pom {
+                    name = 'android-sdk'
+                    description = libraryDescription
+                    url = siteUrl
+                    licenses {
+                        license {
+                            name = 'The Apache Software License, Version 2.0'
+                            url  = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
                     }
-                }
 
-                developers {
-                    developer {
-                        id 'instamojo'
-                        name 'Instamojo Technologies'
-                        email 'support@instamojo.com'
+                    developers {
+                        developer {
+                            id  = 'instamojo'
+                            name = 'Instamojo Technologies'
+                            email = 'support@instamojo.com'
+                        }
                     }
-                }
 
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
+                    scm {
+                        connection = gitUrl
+                        developerConnection = gitUrl
+                        url = siteUrl
+                    }
+
+                    signing{
+                        required true
+                        sign configurations.archives
+                    }
                 }
             }
         }
     }
+}
+
+ext["signing.keyId"] = 'FC6C2616'
+ext["signing.password"] = 'xDR5qmIP!9UL'
+ext["signing.key"] = 'key'
+
+
+signing {
+    sign publishing.publications
 }

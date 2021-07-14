@@ -67,4 +67,5 @@ public class PaymentActivity extends BaseActivity {
         Logger.d(TAG, "Invoking Juspay Cancel Payment Handler");
         currentFragment.juspayBackPressedHandler(true);
     }
+
 }

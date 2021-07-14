@@ -51,28 +51,23 @@ public class PaymentOptionsFragment extends BaseFragment implements View.OnClick
         View upiLayout = view.findViewById(R.id.upi_layout);
 
         if (paymentOptions.getNetBankingOptions() == null) {
-            Logger.d(TAG, "Hiding Net banking Layout");
             netBankingLayout.setVisibility(View.GONE);
         }
 
         if (paymentOptions.getCardOptions() == null) {
-            Logger.d(TAG, "Hiding Debit and Credit Card Layout");
             debitCardLayout.setVisibility(View.GONE);
             creditCardLayout.setVisibility(View.GONE);
         }
 
         if (paymentOptions.getEmiOptions() == null) {
-            Logger.d(TAG, "Hiding EMI Layout");
             emiLayout.setVisibility(View.GONE);
         }
 
         if (paymentOptions.getWalletOptions() == null) {
-            Logger.d(TAG, "Hiding Wallet Layout");
             walletLayout.setVisibility(View.GONE);
         }
 
         if (paymentOptions.getUpiOptions() == null) {
-            Logger.d(TAG, "Hiding UPISubmission layout");
             upiLayout.setVisibility(View.GONE);
         }
 
@@ -90,26 +85,20 @@ public class PaymentOptionsFragment extends BaseFragment implements View.OnClick
         int id = v.getId();
 
         if (id == R.id.wallet_layout) {
-            Logger.d(TAG, "Starting Wallet Form");
             parentActivity.loadFragment(WalletFragment.newInstance(), true);
 
         } else if (id == R.id.net_banking_layout) {
-            Logger.d(TAG, "Starting Net Banking Form");
             parentActivity.loadFragment(NetBankingFragment.newInstance(), true);
 
         } else if (id == R.id.emi_layout) {
-            Logger.d(TAG, "Starting EMI Form");
             parentActivity.loadFragment(new EMIFragment(), true);
 
         } else if (id == R.id.upi_layout) {
-            Logger.d(TAG, "Starting UPISubmission Form");
             parentActivity.loadFragment(new UPIFragment(), true);
 
         } else {
-            Logger.d(TAG, "Starting CardFragment");
             if (id == R.id.debit_card_layout) {
                 parentActivity.loadFragment(CardFragment.getCardForm(CardFragment.Mode.DebitCard), true);
-
             } else {
                 parentActivity.loadFragment(CardFragment.getCardForm(CardFragment.Mode.CreditCard), true);
             }

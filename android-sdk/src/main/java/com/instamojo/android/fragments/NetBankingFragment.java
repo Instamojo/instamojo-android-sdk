@@ -102,7 +102,7 @@ public class NetBankingFragment extends BaseFragment implements SearchView.OnQue
                 Bundle bundle = new Bundle();
                 bundle.putString(Constants.URL, netBankingOptions.getSubmissionURL());
                 bundle.putString(Constants.POST_DATA, netBankingOptions.getPostData(filteredBanks.get(position).getId()));
-                parentActivity.startPaymentActivity(bundle);
+                getParentFragmentManager().setFragmentResult(PaymentDetailsActivity.START_PAYMENT,bundle);
             }
         });
     }

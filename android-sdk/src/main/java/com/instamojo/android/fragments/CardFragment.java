@@ -39,6 +39,7 @@ import com.instamojo.android.models.GatewayOrder;
 import com.instamojo.android.network.ImojoService;
 import com.instamojo.android.network.Resource;
 import com.instamojo.android.network.ServiceGenerator;
+import com.instamojo.android.repo.CardsRepo;
 import com.instamojo.android.views.cards.CardsViewModel;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.METValidator;
@@ -128,7 +129,28 @@ public class CardFragment extends BaseFragment implements View.OnClickListener, 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        cardsViewModel = ViewModelProviders.of(this).get(CardsViewModel.class);
+        cardsViewModel = ViewModelProviders.of(this,new CardsViewModel.CardsViewModelFactory(
+                new CardsRepo(ServiceGenerator.getImojoService())
+        )).get(CardsViewModel.class);
+
+        cardsViewModel.checkout().observe(this, new Observer<Resource<CardPaymentResponse>>() {
+            @Override
+            public void onChanged(Resource<CardPaymentResponse> cardPaymentResponseResource) {
+                if (cardPaymentResponseResource.getStatus() == Resource.SUCCESS) {
+                    changeEditBoxesState(true);
+                    //dialog.dismiss();
+                    final Bundle bundle = new Bundle();
+                    bundle.putString(Constants.URL, cardPaymentResponseResource.getData().getUrl());
+                    //bundle.putString(Constants.MERCHANT_ID, cardOptions.getSubmissionData().getMerchantID());
+                    //bundle.putString(Constants.ORDER_ID, cardOptions.getSubmissionData().getOrderID());
+                    parentActivity.startPaymentActivity(bundle);
+                } else if (cardPaymentResponseResource.getStatus() == Resource.ERROR) {
+                    Toast.makeText(parentActivity, R.string.error_message_juspay,
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
     @Override
@@ -330,24 +352,8 @@ public class CardFragment extends BaseFragment implements View.OnClickListener, 
         Map<String, String> cardPaymentRequest = ObjectMapper.populateCardRequest(order, card,
                 mSelectedBankCode, mSelectedTenure);
         final CardOptions cardOptions = order.getPaymentOptions().getCardOptions();
-        cardsViewModel.checkout(cardOptions.getSubmissionURL(),
-                cardPaymentRequest).observe(this, new Observer<Resource<CardPaymentResponse>>() {
-            @Override
-            public void onChanged(Resource<CardPaymentResponse> cardPaymentResponseResource) {
-                if (cardPaymentResponseResource.getStatus() == Resource.SUCCESS) {
-                    changeEditBoxesState(true);
-                    dialog.dismiss();
-                    final Bundle bundle = new Bundle();
-                    bundle.putString(Constants.URL, cardPaymentResponseResource.getData().getUrl());
-                    bundle.putString(Constants.MERCHANT_ID, cardOptions.getSubmissionData().getMerchantID());
-                    bundle.putString(Constants.ORDER_ID, cardOptions.getSubmissionData().getOrderID());
-                    parentActivity.startPaymentActivity(bundle);
-                } else if (cardPaymentResponseResource.getStatus() == Resource.ERROR) {
-                    Toast.makeText(parentActivity, R.string.error_message_juspay,
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+
+        cardsViewModel.onCheckout(cardOptions.getSubmissionURL(),order,card,mSelectedBankCode,mSelectedTenure);
 
     }
 

@@ -51,6 +51,8 @@ public class PaymentDetailsActivity extends BaseActivity {
     private SearchView.OnQueryTextListener onQueryTextListener;
     private String hintText;
 
+    public static final String START_PAYMENT = "instamojo:start:payment";
+
     private PaymentDetailsViewModel paymentDetailsViewModel;
 
     @Override
@@ -78,6 +80,14 @@ public class PaymentDetailsActivity extends BaseActivity {
                 fireBroadcastAndReturn(mapResultCode(Activity.RESULT_OK),result);
             }
         });
+
+        getSupportFragmentManager().setFragmentResultListener(START_PAYMENT, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                startPaymentActivity(result);
+            }
+        });
+
     }
 
     private void setStatusBarColor() {
@@ -255,4 +265,5 @@ public class PaymentDetailsActivity extends BaseActivity {
 
         return Instamojo.RESULT_FAILED;
     }
+
 }

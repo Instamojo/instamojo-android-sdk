@@ -3,6 +3,7 @@ package com.instamojo.android.fragments;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.widget.SearchView;
 import android.view.LayoutInflater;
@@ -57,8 +58,7 @@ public class WalletFragment extends BaseFragment implements SearchView.OnQueryTe
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         headerTextView.setText(R.string.choose_your_wallet);
         parentActivity.updateActionBarTitle(R.string.wallets);
         parentActivity.showSearchOption(getString(R.string.search_your_wallet), this);
@@ -74,7 +74,6 @@ public class WalletFragment extends BaseFragment implements SearchView.OnQueryTe
     public void inflateXML(View view) {
         mWalletListView = view.findViewById(R.id.list_container);
         headerTextView = view.findViewById(R.id.header_text);
-        Logger.d(TAG, "Inflated XML");
     }
 
     private void loadAllWallets() {
@@ -98,7 +97,7 @@ public class WalletFragment extends BaseFragment implements SearchView.OnQueryTe
                 Bundle bundle = new Bundle();
                 bundle.putString(Constants.URL, walletOptions.getSubmissionURL());
                 bundle.putString(Constants.POST_DATA, walletOptions.getPostData(filteredWallets.get(position).getId()));
-                parentActivity.startPaymentActivity(bundle);
+                getParentFragmentManager().setFragmentResult(PaymentDetailsActivity.START_PAYMENT,bundle);
             }
         });
     }
@@ -114,4 +113,5 @@ public class WalletFragment extends BaseFragment implements SearchView.OnQueryTe
         loadWallets(newText);
         return false;
     }
+
 }
