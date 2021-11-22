@@ -255,4 +255,9 @@ public class PaymentDetailsActivity extends BaseActivity {
 
         return Instamojo.RESULT_FAILED;
     }
+
+    public void onUPIResponse(Bundle bundle, int resultOk) {
+        fireBroadcastAndReturn(mapResultCode(resultOk),bundle);
+    }
+
 }

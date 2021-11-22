@@ -1,5 +1,9 @@
 package com.instamojo.android.helpers;
 
+import android.os.Bundle;
+
+import com.instamojo.android.models.GatewayOrder;
+
 import java.math.BigDecimal;
 
 public class MoneyUtil {
@@ -28,4 +32,13 @@ public class MoneyUtil {
         double emiAmount = amount * perRate / (1 - Math.pow((1 / (1 + perRate)), tenure));
         return getRoundedValue(emiAmount, 2);
     }
+
+    public static Bundle createBundleFromOrder(String id,String transactionID, String paymentID) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.ORDER_ID, id);
+        bundle.putString(Constants.TRANSACTION_ID, transactionID);
+        bundle.putString(Constants.PAYMENT_ID, paymentID);
+        return bundle;
+    }
+
 }

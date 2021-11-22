@@ -1,5 +1,8 @@
 package com.instamojo.android.helpers;
 
+import com.instamojo.android.models.GatewayOrder;
+import com.instamojo.android.models.Order;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,4 +43,6 @@ public class MoneyUtilTest {
     public void getMonthlyEMI_ValidParams_ReturnsExpectedEMI(double amount, BigDecimal rate, int tenure, double expectedEMI) {
         assertEquals(expectedEMI, MoneyUtil.getMonthlyEMI(amount, rate, tenure), 0.0);
     }
+
+
 }
