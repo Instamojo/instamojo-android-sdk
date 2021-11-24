@@ -54,7 +54,6 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "android-sdk/build.gradle" }}
-
       - name: Upload release
         run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-daemon --no-parallel
         env:
@@ -62,8 +61,7 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
-
-      - name: Publish release
+     - name: Publish release
         run: ./gradlew closeAndReleaseRepository --no-daemon --no-parallel
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
