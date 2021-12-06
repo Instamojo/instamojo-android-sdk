@@ -50,10 +50,6 @@ jobs:
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "android-sdk/build.gradle" }}
           
       - run:
           name: Upload release
@@ -69,6 +65,12 @@ jobs:
           env:
              ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
              ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+ 
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "android-sdk/build.gradle" }}
+              
           
 workflows:
   version: 2
