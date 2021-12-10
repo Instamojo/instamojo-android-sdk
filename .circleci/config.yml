@@ -44,7 +44,7 @@ jobs:
       - run:
           name: Upload release
           command: ./gradlew publishAllPublicationsToMavenCentralRepository 
-          env:
+          environment:
               ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
               ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
               ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
@@ -52,7 +52,7 @@ jobs:
       - run:
           name: Publish release
           command: ./gradlew closeAndReleaseRepository 
-          env:
+          environment:
              ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
              ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}            
             
