@@ -1,0 +1,80 @@
+apply plugin: 'digital.wup.android-maven-publish'
+apply plugin: 'signing'
+
+version = sdkVersion
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set('javadoc')
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        releaseSdk(MavenPublication) {
+            group = 'com.instamojo'
+            artifactId = 'android-sdk'
+            version = '3.6.0'
+
+            from components.android
+
+            pom {
+                name = 'android-sdk'
+                packaging = 'aar'
+                description = 'Instamojo Payments Android SDK'
+                url = 'https://github.com/Instamojo/instamojo-android-sdk'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'instamojo'
+                        name = 'Instamojo Technologies'
+                        email = 'support@instamojo.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/Instamojo/instamojo-android-sdk.git'
+                    developerConnection = 'scm:git:ssh://git@github.com/Instamojo/instamojo-android-sdk.git'
+                    url = 'https://github.com/Instamojo/instamojo-android-sdk'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "OSSRH"
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = findProperty("NEXUS_USER")
+                password = findProperty("NEXUS_PASSWORD")
+            }
+        }
+    }
+}
+
+signing {
+    def key = findProperty("signing.key")
+    def pass = findProperty("signing.password")
+    useInMemoryPgpKeys(key, pass)
+    sign publishing.publications.releaseSdk
+}

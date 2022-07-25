@@ -55,8 +55,13 @@ jobs:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "android-sdk/build.gradle" }}
       - run:
-          name: Publish to Bintray
-          command: ./gradlew bintrayUpload
+          name: Setup Signing Configuration
+          command: |
+            echo $ORG_GRADLE_PROJECT_SIGNING_KEY | awk 'NR == 1 { print "\nsigning.key=" } 1' ORS='\\n' >> gradle.properties
+            echo $ORG_GRADLE_PROJECT_SIGNING_KEY_PWD | awk 'NR == 1 { print "\nsigning.password=" } 1' ORS='' >> gradle.properties
+      - run:
+          name: Publish to Nexus
+          command: ./gradlew publish --stacktrace
 
 workflows:
   version: 2
@@ -68,6 +73,7 @@ workflows:
             tags:
               only: /.*/
       - release:
+          context: nexus-publish
           requires:
             - build
           filters:
