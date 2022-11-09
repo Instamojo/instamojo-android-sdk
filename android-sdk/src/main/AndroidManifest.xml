@@ -17,6 +17,7 @@
         android:supportsRtl="true">
         <activity
             android:name=".activities.PaymentDetailsActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/SdkTheme">
             <meta-data
@@ -29,6 +30,7 @@
 
         <activity
             android:name=".activities.PaymentActivity"
+            android:exported="true"
             android:hardwareAccelerated="true"
             android:label="Payment"
             android:screenOrientation="portrait"
