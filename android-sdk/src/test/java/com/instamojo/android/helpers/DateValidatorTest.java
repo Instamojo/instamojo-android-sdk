@@ -3,8 +3,6 @@ package com.instamojo.android.helpers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Calendar;
-
 import junitparams.JUnitParamsRunner;
 
 import static org.junit.Assert.assertFalse;
