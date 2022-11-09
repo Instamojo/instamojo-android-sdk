@@ -41,22 +41,6 @@ jobs:
           command: |
             curl -s https://codecov.io/bash | bash
 
-      - run:
-          name: Upload release
-          command: ./gradlew publishAllPublicationsToMavenCentralRepository 
-          environment:
-              ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
-              ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-              ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
-              ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
-      - run:
-          name: Publish release
-          command: ./gradlew closeAndReleaseRepository 
-          environment:
-             ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
-             ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}            
-            
-
   release:
     <<: *defaults
     steps:
@@ -66,13 +50,19 @@ jobs:
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
-          
       - save_cache:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "android-sdk/build.gradle" }}
-              
-          
+      - run:
+          name: Setup Signing Configuration
+          command: |
+            echo $ORG_GRADLE_PROJECT_SIGNING_KEY | awk 'NR == 1 { print "\nsigning.key=" } 1' ORS='\\n' >> gradle.properties
+            echo $ORG_GRADLE_PROJECT_SIGNING_KEY_PWD | awk 'NR == 1 { print "\nsigning.password=" } 1' ORS='' >> gradle.properties
+      - run:
+          name: Publish to Nexus
+          command: ./gradlew publish --stacktrace
+
 workflows:
   version: 2
   build-and-release:
@@ -83,6 +73,7 @@ workflows:
             tags:
               only: /.*/
       - release:
+          context: nexus-publish
           requires:
             - build
           filters:

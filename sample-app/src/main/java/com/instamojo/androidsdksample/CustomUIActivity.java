@@ -7,16 +7,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.instamojo.android.Instamojo;
 import com.instamojo.android.activities.PaymentActivity;
-import com.instamojo.android.activities.PaymentDetailsViewModel;
 import com.instamojo.android.adapters.BankListAdapter;
 import com.instamojo.android.helpers.Constants;
 import com.instamojo.android.helpers.Logger;
@@ -28,7 +24,6 @@ import com.instamojo.android.models.CardPaymentResponse;
 import com.instamojo.android.models.GatewayOrder;
 import com.instamojo.android.models.PaymentOptions;
 import com.instamojo.android.network.ImojoService;
-import com.instamojo.android.network.Resource;
 import com.instamojo.android.network.ServiceGenerator;
 
 import java.io.IOException;
@@ -45,14 +40,11 @@ public class CustomUIActivity extends AppCompatActivity {
     private static final String TAG = CustomUIActivity.class.getSimpleName();
     private AlertDialog dialog;
     private GatewayOrder mOrder;
-    private PaymentDetailsViewModel paymentDetailsViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_form);
-
-
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false); // if you want user to wait for some process to finish,
@@ -64,15 +56,31 @@ public class CustomUIActivity extends AppCompatActivity {
     }
 
     private void fetchOrder(String orderID) {
-        paymentDetailsViewModel.getOrderDetails(orderID).observe(this, new Observer<Resource<GatewayOrder>>() {
+        ImojoService imojoService = ServiceGenerator.getImojoService();
+        Call<GatewayOrder> gatewayOrderCall = imojoService.getPaymentOptions(orderID);
+        gatewayOrderCall.enqueue(new Callback<GatewayOrder>() {
             @Override
-            public void onChanged(Resource<GatewayOrder> gatewayOrderResource) {
-                if(gatewayOrderResource.getStatus() == Resource.ERROR){
-                    //fireBroadcastAndReturn(Instamojo.RESULT_FAILED, null, "Error fetching order details");
-                }else if(gatewayOrderResource.getStatus() == Resource.SUCCESS) {
-                    //order = gatewayOrderResource.getData();
-                    //loadFragments();
+            public void onResponse(Call<GatewayOrder> call, Response<GatewayOrder> response) {
+                if (response.isSuccessful()) {
+                    mOrder = response.body();
+                    makeUI();
+
+                } else {
+                    if (response.errorBody() != null) {
+                        try {
+                            Logger.d(TAG, "Error response from server while fetching order details.");
+                            Logger.e(TAG, "Error: " + response.errorBody().string());
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
+            }
+
+            @Override
+            public void onFailure(Call<GatewayOrder> call, Throwable t) {
+                Logger.d(TAG, "Failure fetching gateway order");
             }
         });
     }
@@ -183,7 +191,7 @@ public class CustomUIActivity extends AppCompatActivity {
         final CardOptions cardOptions = order.getPaymentOptions().getCardOptions();
         Map<String, String> cardPaymentRequest = ObjectMapper.populateCardRequest(order, card, null, 0);
 
-        /*Call<CardPaymentResponse> orderCall = service.collectCardPayment(cardOptions.getSubmissionURL(), cardPaymentRequest);
+        Call<CardPaymentResponse> orderCall = service.collectCardPayment(cardOptions.getSubmissionURL(), cardPaymentRequest);
         orderCall.enqueue(new Callback<CardPaymentResponse>() {
             @Override
             public void onResponse(Call<CardPaymentResponse> call, final Response<CardPaymentResponse> response) {
@@ -221,7 +229,7 @@ public class CustomUIActivity extends AppCompatActivity {
                     }
                 });
             }
-        });*/
+        });
     }
 
     private boolean cardValid(Card card) {

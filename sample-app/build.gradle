@@ -45,14 +45,14 @@ android {
 }
 
 dependencies {
-    api fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // Using local android-sdk project
-    api project(":android-sdk")
+    implementation project(":android-sdk")
     // Comment out the above dependency and uncomment the below one to use the release SDK aar
     // Release info: https://github.com/Instamojo/instamojo-android-sdk/releases
-     //implementation 'com.instamojo:android-sdk:3.5.0'
+    // implementation 'com.instamojo:android-sdk:[LATEST-VERSION]'
 }

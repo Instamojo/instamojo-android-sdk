@@ -1,4 +1,4 @@
-apply plugin:  "maven-publish"
+apply plugin: 'com.jfrog.bintray'
 
 version = sdkVersion
 
@@ -22,37 +22,27 @@ artifacts {
     archives sourcesJar
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            group = 'com.instamojo'
-            artifactId = 'android-sdk'
-            version = '3.6.0'
+bintray {
+    user = System.getenv("BINTRAY_USER")
+    key = System.getenv("BINTRAY_KEY")
 
-            pom {
-                name = 'android-sdk'
-                packaging = 'aar'
-                description = 'Instamojo Payments Android SDK'
-                url = 'https://github.com/Instamojo/instamojo-android-sdk'
-
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'instamojo'
-                        name = 'Instamojo Technologies'
-                        email = 'support@instamojo.com'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:git://github.com/Instamojo/instamojo-android-sdk.git'
-                    developerConnection = 'scm:git:ssh://git@github.com/Instamojo/instamojo-android-sdk.git'
-                    url = 'https://github.com/Instamojo/instamojo-android-sdk'
-                }
+    configurations = ['archives']
+    pkg {
+        userOrg = 'instamojo'
+        repo = 'maven'
+        name = 'android-sdk'
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = System.getenv("BINTRAY_GPG_PASSWORD")
+                //Optional. The passphrase for GPG signing'
             }
         }
     }

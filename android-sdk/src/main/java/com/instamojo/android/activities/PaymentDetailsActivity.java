@@ -1,20 +1,14 @@
 package com.instamojo.android.activities;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,12 +20,10 @@ import com.instamojo.android.Instamojo;
 import com.instamojo.android.R;
 import com.instamojo.android.fragments.BaseFragment;
 import com.instamojo.android.fragments.PaymentOptionsFragment;
-import com.instamojo.android.fragments.UPIFragment;
 import com.instamojo.android.helpers.Constants;
 import com.instamojo.android.helpers.Logger;
 import com.instamojo.android.models.GatewayOrder;
 import com.instamojo.android.network.ImojoService;
-import com.instamojo.android.network.Resource;
 import com.instamojo.android.network.ServiceGenerator;
 
 import java.io.IOException;
@@ -51,16 +43,12 @@ public class PaymentDetailsActivity extends BaseActivity {
     private SearchView.OnQueryTextListener onQueryTextListener;
     private String hintText;
 
-    private PaymentDetailsViewModel paymentDetailsViewModel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStatusBarColor();
         setContentView(R.layout.activity_payment_details_instamojo);
         inflateXML();
-
-        paymentDetailsViewModel = ViewModelProviders.of(this).get(PaymentDetailsViewModel.class);
 
         String orderID = getIntent().getStringExtra(Constants.ORDER_ID);
         if (orderID == null) {
@@ -72,12 +60,6 @@ public class PaymentDetailsActivity extends BaseActivity {
 
         IntentFilter filter = new IntentFilter(Instamojo.ACTION_INTENT_FILTER);
         registerReceiver(Instamojo.getInstance(), filter);
-        getSupportFragmentManager().setFragmentResultListener(UPIFragment.UPI_RESULT, this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                fireBroadcastAndReturn(mapResultCode(Activity.RESULT_OK),result);
-            }
-        });
     }
 
     private void setStatusBarColor() {
@@ -88,15 +70,33 @@ public class PaymentDetailsActivity extends BaseActivity {
     }
 
     private void fetchOrder(String orderID) {
-        paymentDetailsViewModel.getOrderDetails(orderID).observe(this, new Observer<Resource<GatewayOrder>>() {
+        ImojoService imojoService = ServiceGenerator.getImojoService();
+        Call<GatewayOrder> gatewayOrderCall = imojoService.getPaymentOptions(orderID);
+        gatewayOrderCall.enqueue(new Callback<GatewayOrder>() {
             @Override
-            public void onChanged(Resource<GatewayOrder> gatewayOrderResource) {
-                if(gatewayOrderResource.getStatus() == Resource.ERROR){
-                    fireBroadcastAndReturn(Instamojo.RESULT_FAILED, null, "Error fetching order details");
-                }else if(gatewayOrderResource.getStatus() == Resource.SUCCESS) {
-                    order = gatewayOrderResource.getData();
+            public void onResponse(Call<GatewayOrder> call, Response<GatewayOrder> response) {
+                if (response.isSuccessful()) {
+                    order = response.body();
                     loadFragments();
+
+                } else {
+                    if (response.errorBody() != null) {
+                        try {
+                            Logger.d(TAG, "Error response from server while fetching order details.");
+                            Logger.e(TAG, "Error: " + response.errorBody().string());
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    fireBroadcastAndReturn(Instamojo.RESULT_FAILED, null, "Error fetching order details");
                 }
+            }
+
+            @Override
+            public void onFailure(Call<GatewayOrder> call, Throwable t) {
+                fireBroadcastAndReturn(Instamojo.RESULT_FAILED, null, "Failed to fetch order details");
             }
         });
     }
@@ -118,6 +118,8 @@ public class PaymentDetailsActivity extends BaseActivity {
                 searchView.setOnQueryTextListener(onQueryTextListener);
             }
         }
+
+        Logger.d(TAG, "Inflated Options Menu");
         return true;
     }
 
@@ -165,6 +167,7 @@ public class PaymentDetailsActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         updateActionBar();
+        Logger.d(TAG, "Inflated XML");
     }
 
     /**
@@ -194,12 +197,13 @@ public class PaymentDetailsActivity extends BaseActivity {
             fragmentTransaction.addToBackStack(fragment.getFragmentName());
         }
         fragmentTransaction.commit();
+        Logger.d(TAG, "Loaded Fragment - " + fragment.getClass().getSimpleName());
     }
 
     /**
      * Show the search icon in the actionbar
      *
-     * @param queryTextListener {@link androidx.appcompat.widget.SearchView.OnQueryTextListener} to listen for the query string
+     * @param queryTextListener {@link android.support.v7.widget.SearchView.OnQueryTextListener} to listen for the query string
      */
     public void showSearchOption(String hintText, SearchView.OnQueryTextListener queryTextListener) {
         this.showSearch = true;
