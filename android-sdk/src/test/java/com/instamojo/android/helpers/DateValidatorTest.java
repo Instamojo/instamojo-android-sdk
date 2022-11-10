@@ -15,7 +15,7 @@ public class DateValidatorTest {
 
     private static final String VALID_MONTH = "8";
     private static final String INVALID_MONTH = "13";
-    private static final String VALID_YEAR = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
+    private static final String VALID_YEAR = "2035";
     private static final String INVALID_YEAR = "0000";
     private static final String VALID_DIGITS = "123";
     private static final String INVALID_DIGITS = "abc";

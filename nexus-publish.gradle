@@ -28,7 +28,7 @@ publishing {
         releaseSdk(MavenPublication) {
             group = 'com.instamojo'
             artifactId = 'android-sdk'
-            version = '3.6.0'
+            version = '3.7.0'
 
             from components.android
 

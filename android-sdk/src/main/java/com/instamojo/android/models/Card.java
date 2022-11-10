@@ -1,6 +1,6 @@
 package com.instamojo.android.models;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.instamojo.android.helpers.CardUtil;
 
