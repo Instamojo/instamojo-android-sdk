@@ -1,8 +1,5 @@
 package com.instamojo.android.helpers;
 
-import com.instamojo.android.models.GatewayOrder;
-import com.instamojo.android.models.Order;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
