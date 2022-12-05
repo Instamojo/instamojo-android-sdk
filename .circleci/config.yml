@@ -1,7 +1,7 @@
 defaults: &defaults
   working_directory: ~/code
   docker:
-    - image: circleci/android:api-27-alpha
+    - image: circleci/android:api-30
   environment:
     JVM_OPTS: -Xmx3200m
 
@@ -35,11 +35,11 @@ jobs:
       - store_artifacts:
           path: android-sdk/build/outputs/aar/
           destination: aar
-      - run:
-          name: Publishing coverage report(codecov.io)
-          when: always
-          command: |
-            curl -s https://codecov.io/bash | bash
+#      - run:
+#          name: Publishing coverage report(codecov.io)
+#          when: always
+#          command: |
+#            curl -s https://codecov.io/bash | bash
 
   release:
     <<: *defaults
