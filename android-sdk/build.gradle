@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
 
 ext {
-    sdkVersion = '3.7.0'
-    sdkVersionCode = 23
+    sdkVersion = '3.7.1'
+    sdkVersionCode = 24
     libraryDescription = 'Instamojo Payments Android SDK'
     siteUrl = 'https://github.com/Instamojo/instamojo-android-sdk'
     gitUrl = 'https://github.com/Instamojo/instamojo-android-sdk.git'
@@ -17,10 +17,10 @@ repositories {
 
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode sdkVersionCode
         versionName sdkVersion
         vectorDrawables.useSupportLibrary = true
